@@ -1,4 +1,4 @@
-const CACHE="food-decider-v23-maplinks-1";
+const CACHE="food-decider-v24-chains-1";
 const CORE=["./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./apple-touch-icon.png","./favicon-32.png"];
 
 self.addEventListener("install",(event)=>{
