@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>今天吃什麼？｜Location Beta</title>
+<title>今天吃什麼？｜Nearby Search Beta</title>
 <meta name="theme-color" content="#273f32">
 <meta name="color-scheme" content="light">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -350,6 +350,23 @@ body.beta-external-location #autoContext{background:rgba(255,255,255,.12)}
   .beta-location-actions,.beta-address-choice,.beta-preview-actions{grid-template-columns:1fr}
 }
 
+
+/* v26 live nearby search */
+.beta-live-source{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.beta-source-chip{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:5px 8px;background:#eef5ef;color:#3e5948;font-size:9px;font-weight:900}
+.beta-source-chip.warn{background:#fff5df;color:#7a6233}
+.beta-source-chip.error{background:#fff0ee;color:#94504a}
+.beta-scan-box{margin-top:13px;border:1px solid var(--line);background:#fff;border-radius:16px;padding:12px 13px}
+.beta-scan-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.beta-scan-title{font-size:12px;font-weight:900;color:#425149}
+.beta-scan-sub{font-size:10px;color:#7c837e;margin-top:3px;line-height:1.5}
+.beta-progress{height:6px;border-radius:999px;background:#ecefea;overflow:hidden;margin-top:10px}
+.beta-progress>span{display:block;height:100%;width:0;background:#4f6f59;transition:width .25s ease}
+.beta-retry{border:1px solid var(--line);background:#fff;color:#566158;border-radius:10px;padding:7px 9px;font-size:10px;font-weight:900;cursor:pointer}
+.beta-nearby-meta{font-size:10px;color:#7d837e;line-height:1.55;margin-top:7px}
+.beta-osm-attrib{font-size:9px;color:#8b918c;line-height:1.5;margin-top:8px}
+.beta-osm-attrib a{color:inherit}
+
 </style>
 </head>
 <body>
@@ -363,7 +380,7 @@ body.beta-external-location #autoContext{background:rgba(255,255,255,.12)}
     </div>
   </div>
   <div class="top">
-    <div class="brand">FOOD DECIDER · LOCATION BETA</div>
+    <div class="brand">FOOD DECIDER · NEARBY BETA</div>
     <span class="beta-pill">BETA・不影響正式版</span>
     <div class="home-switch beta-legacy-switch" aria-hidden="true">
       <button id="h-hsinchu" class="active" onclick="setHome('hsinchu')">竹北家</button>
@@ -377,7 +394,7 @@ body.beta-external-location #autoContext{background:rgba(255,255,255,.12)}
   <section class="hero">
     <div class="eyebrow" id="homeLabel">📍 竹北家附近</div>
     <h1>今天吃什麼？</h1>
-    <p>先測「人在不同地方時怎麼切換地點」。附近店家自動搜尋這一版故意先不接，避免介面還沒定就把系統做死。</p>
+    <p>現在會真的搜尋你輸入地點附近的餐廳：先掃近距離，店太少才自動擴大，再直接交給原本的抽選邏輯。</p>
     <button class="decide" onclick="safeDecide()">🍚 幫我決定</button>
     <div id="betaLocationCard" class="beta-location-card">
       <div class="beta-location-main">
@@ -397,7 +414,7 @@ body.beta-external-location #autoContext{background:rgba(255,255,255,.12)}
   </section>
 
   <section class="section">
-    <div class="beta-notice"><b>Location Beta：</b>竹北家／台南家仍可正常抽店；如果選「臨時地址／目前位置／新常用地點」，這一版只測地點流程，不會偷拿竹北或台南的店假裝是附近店家。</div>
+    <div class="beta-notice"><b>Nearby Beta：</b>臨時地點／常用地點／目前位置會用 OpenStreetMap 公開資料實際抓附近餐廳。資料覆蓋不等於 Google Maps 完整度，營業時間與價格多半仍需點店名到 Google Maps 核對。</div>
     <div class="section-title"><h2>今天的條件</h2><span>都不選也可以</span></div>
     <div class="card">
       <div class="chips">
@@ -561,7 +578,8 @@ body.beta-external-location #autoContext{background:rgba(255,255,255,.12)}
       <div class="note">※ v24 新增知名連鎖掃描：補進竹北遠百／光明商圈與台南南紡／成大／中華東路的大型連鎖分店，並新增「🏬 知名連鎖」篩選。</div>
     </div>
   </section>
-  <div class="build-note">v25 Location Beta · Build 2026-10-10<br>這個頁面的測試資料使用獨立儲存空間，不會修改正式 v24 的個人紀錄。<br>你輸入的地址只存在自己的瀏覽器，不會寫進公開原始碼。</div>
+  <div class="beta-osm-attrib" style="text-align:center;margin:14px 0">Geocoding and nearby POI data © OpenStreetMap contributors. Public Nominatim / Overpass are shared community services; searches are user-triggered and cached.</div>
+    <div class="build-note">v26 Nearby Search Beta · Build 2026-10-11<br>任意地點會用 OpenStreetMap Nominatim＋Overpass 搜附近餐飲；查詢由你按下地點／搜尋時觸發，結果會在瀏覽器快取以減少重複請求。<br>正式 v24 的 index.html 與正式個人紀錄不受影響。</div>
 </div>
 
 <div class="mobile-dock">
@@ -595,7 +613,7 @@ body.beta-external-location #autoContext{background:rgba(255,255,255,.12)}
       <button class="primary" onclick="openBetaAddressModal()">＋ 輸入一段地址</button>
       <button id="betaGeoButton" onclick="useBetaCurrentLocation()">◎ 使用目前位置</button>
     </div>
-    <div class="beta-privacy-note">地址與你允許取得的座標只會存在這個瀏覽器的 Beta 儲存空間。按「使用目前位置」時，瀏覽器會另外詢問定位權限。</div>
+    <div class="beta-privacy-note">常用地點仍只存在這個瀏覽器。按「使用目前位置」時瀏覽器會詢問定位權限；附近店家搜尋會把座標送到 OpenStreetMap Overpass 取得餐飲 POI。</div>
   </div>
 </div>
 
@@ -610,8 +628,8 @@ body.beta-external-location #autoContext{background:rgba(255,255,255,.12)}
     </div>
     <div class="beta-form">
       <div>
-        <label for="betaAddressInput">地址</label>
-        <input id="betaAddressInput" autocomplete="street-address" placeholder="例如：台南市中西區民生路一段…">
+        <label for="betaAddressInput">地點或地址</label>
+        <input id="betaAddressInput" autocomplete="street-address" placeholder="例如：台北車站、西門町、台南市中西區民生路一段…">
       </div>
       <div>
         <label for="betaLocationNameInput">地點名稱（選填）</label>
@@ -622,7 +640,7 @@ body.beta-external-location #autoContext{background:rgba(255,255,255,.12)}
         <button class="save" onclick="useBetaAddress(true)">⭐ 儲存成常用地點</button>
       </div>
     </div>
-    <div class="beta-privacy-note">Beta 先測流程，所以這一步不會真的掃附近店家。選完後「幫我決定」會顯示下一階段預計怎麼搜尋，而不是拿別區的餐廳混進來。</div>
+    <div class="beta-privacy-note">選完後會開始實際搜尋附近店家。若輸入文字地點／地址，搜尋時會把這段文字送到 OpenStreetMap Nominatim 做位置解析；不想送出的私人地址請改用「目前位置」。</div>
   </div>
 </div>
 
@@ -1205,6 +1223,269 @@ let betaActiveLocation={
   temporary:false
 };
 
+const BETA_GEO_CACHE_KEY="fd_beta26_geocode_cache_v1";
+const BETA_NEARBY_CACHE_KEY="fd_beta26_nearby_cache_v1";
+const BETA_NOMINATIM_LAST_KEY="fd_beta26_nominatim_last_v1";
+const BETA_GEO_CACHE_MS=30*86400000;
+const BETA_NEARBY_CACHE_MS=6*3600000;
+let betaNearby={locationId:null,status:"idle",shops:[],radius:0,lat:null,lng:null,resolvedName:"",error:"",fromCache:false,startedAt:0};
+
+
+
+function betaReadJson(key,fallback){
+  try{ const x=JSON.parse(localStorage.getItem(key)||"null"); return x??fallback; }catch(e){ return fallback; }
+}
+function betaWriteJson(key,value){
+  try{ localStorage.setItem(key,JSON.stringify(value)); }catch(e){ /* cache failure is non-fatal */ }
+}
+function betaSleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+function betaLocationKey(loc=betaActiveLocation){
+  if(!loc) return "none";
+  if(loc.kind==="geo" && Number.isFinite(loc.lat)&&Number.isFinite(loc.lng)) return `geo:${loc.lat.toFixed(4)},${loc.lng.toFixed(4)}`;
+  if(Number.isFinite(loc.lat)&&Number.isFinite(loc.lng)) return `pos:${loc.lat.toFixed(4)},${loc.lng.toFixed(4)}`;
+  return `q:${String(loc.address||loc.label||"").trim().toLowerCase()}`;
+}
+function betaResetNearby(){
+  betaNearby={locationId:betaActiveLocation?.id||null,status:"idle",shops:[],radius:0,lat:null,lng:null,resolvedName:"",error:"",fromCache:false,startedAt:0};
+  resetRound(false);
+}
+function betaExternalReady(){ return betaExternalLocation() && betaNearby.status==="ready" && betaNearby.shops.length>0; }
+function betaNearbyStatusText(){
+  if(!betaExternalLocation()) return "";
+  if(betaNearby.status==="geocoding") return "正在解析地點…";
+  if(betaNearby.status==="searching") return `正在掃附近餐廳${betaNearby.radius?`・${Math.round(betaNearby.radius/100)/10} km`:""}…`;
+  if(betaNearby.status==="ready") return `找到 ${betaNearby.shops.length} 間・掃描半徑約 ${Math.round(betaNearby.radius/100)/10} km${betaNearby.fromCache?"・快取":""}`;
+  if(betaNearby.status==="error") return `搜尋失敗：${betaNearby.error||"請再試一次"}`;
+  return "尚未搜尋附近店家";
+}
+function betaRenderScanStatus(){
+  if(!betaExternalLocation()) return;
+  const card=document.getElementById("betaLocationCardSub");
+  if(card) card.textContent=betaNearbyStatusText();
+  const list=document.getElementById("shopList");
+  if((betaNearby.status==="geocoding"||betaNearby.status==="searching") && list){
+    const progress=betaNearby.status==="geocoding"?28:(betaNearby.radius<=1200?58:78);
+    list.innerHTML=`<div class="beta-scan-box">
+      <div class="beta-scan-top"><div><div class="beta-scan-title">${betaEsc(betaNearbyStatusText())}</div><div class="beta-scan-sub">只會一筆一筆查，不會平行狂打免費服務。</div></div></div>
+      <div class="beta-progress"><span style="width:${progress}%"></span></div>
+      <div class="beta-osm-attrib">Geocoding / nearby POI © OpenStreetMap contributors</div>
+    </div>`;
+  }
+}
+function betaHaversine(lat1,lon1,lat2,lon2){
+  const R=6371000, toRad=x=>x*Math.PI/180;
+  const dLat=toRad(lat2-lat1), dLon=toRad(lon2-lon1);
+  const a=Math.sin(dLat/2)**2+Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+  return 2*R*Math.asin(Math.sqrt(a));
+}
+function betaKnownChain(name,brand){
+  const t=`${name||""} ${brand||""}`.toLowerCase();
+  return /麥當勞|mcdonald|星巴克|starbucks|路易莎|louisa|肯德基|\bkfc\b|摩斯|mos burger|subway|7-?eleven|統一超商|全家|familymart|萊爾富|ok mart|海底撈|開飯|瓦城|涓豆腐|石二鍋|藏壽司|くら寿司|壽司郎|sushiro|涮乃葉|肉多多|築間|王品|西堤|陶板屋|夏慕尼|青花驕|和牛涮|聚 日式|鼎泰豐|八方雲集|四海遊龍|三商巧福|鬍鬚張|すき家|sukiya|吉野家|爭鮮|迷客夏|可不可|五十嵐|50嵐/.test(t);
+}
+function betaCuisineLabel(tags){
+  const a=tags?.amenity||"", shop=tags?.shop||"", c=String(tags?.cuisine||"").toLowerCase();
+  if(a==="cafe") return "咖啡廳";
+  if(a==="fast_food") return /burger/.test(c)?"漢堡・速食":/noodle|ramen/.test(c)?"麵食・速食":"速食・小吃";
+  if(a==="food_court") return "美食街";
+  if(shop==="bakery") return "麵包・烘焙";
+  if(shop==="deli") return "熟食・外帶";
+  if(shop==="convenience") return "便利商店・備案";
+  if(/sushi/.test(c)) return "壽司・日式";
+  if(/ramen/.test(c)) return "拉麵・日式";
+  if(/japanese/.test(c)) return "日式料理";
+  if(/korean/.test(c)) return "韓式料理";
+  if(/thai/.test(c)) return "泰式料理";
+  if(/italian|pasta/.test(c)) return "義式料理";
+  if(/pizza/.test(c)) return "披薩";
+  if(/burger/.test(c)) return "漢堡";
+  if(/hot.?pot|shabu/.test(c)) return "火鍋・鍋物";
+  if(/chinese|taiwanese/.test(c)) return "中式・台式料理";
+  if(/noodle/.test(c)) return "麵食";
+  if(/beef/.test(c)) return "牛肉料理";
+  return a==="restaurant"?"餐廳":"餐飲";
+}
+function betaBuildAddress(tags,lat,lon){
+  const parts=[];
+  const street=[tags?.["addr:street"],tags?.["addr:housenumber"]].filter(Boolean).join("");
+  if(street) parts.push(street);
+  const area=tags?.["addr:district"]||tags?.["addr:suburb"]||tags?.["addr:city"];
+  if(area && !parts.join("").includes(area)) parts.unshift(area);
+  return parts.join("") || `${betaActiveLocation?.label||"目前地點"}附近`;
+}
+function betaNormalizeOsmElement(el,originLat,originLng){
+  const t=el?.tags||{};
+  const lat=Number(el.lat ?? el.center?.lat), lon=Number(el.lon ?? el.center?.lon);
+  if(!Number.isFinite(lat)||!Number.isFinite(lon)) return null;
+  const name=t["name:zh"]||t.name||t.brand||t.operator;
+  if(!name) return null;
+  const internalTags=[];
+  if(t.amenity==="cafe") internalTags.push("light");
+  if(t.shop==="convenience") internalTags.push("fallback");
+  if(betaKnownChain(name,t.brand)) internalTags.push("chain");
+  const cat=betaCuisineLabel(t);
+  const d=Math.round(betaHaversine(originLat,originLng,lat,lon));
+  return {
+    id:`osm_${el.type}_${el.id}`,
+    name,
+    cat,
+    price:0,
+    rating:0,
+    address:betaBuildAddress(t,lat,lon),
+    tags:internalTags,
+    hours:{},
+    osmOpeningHours:t.opening_hours||"",
+    osmCuisine:t.cuisine||"",
+    osmLat:lat,
+    osmLon:lon,
+    _distanceMeters:d,
+    sourceKind:"osmNearby",
+    verifyKind:"osm",
+    verifySource:"OpenStreetMap nearby POI",
+    rawBrand:t.brand||""
+  };
+}
+function betaDedupeNearby(list){
+  const seen=new Map();
+  for(const s of list.filter(Boolean).sort((a,b)=>a._distanceMeters-b._distanceMeters)){
+    const nm=shopNorm(s.name);
+    const cell=`${s.osmLat.toFixed(4)},${s.osmLon.toFixed(4)}`;
+    const key=`${nm}|${cell}`;
+    if(!seen.has(key)) seen.set(key,s);
+  }
+  return [...seen.values()].slice(0,220);
+}
+function betaGeocodeCacheGet(query){
+  const all=betaReadJson(BETA_GEO_CACHE_KEY,{}), k=String(query||"").trim().toLowerCase(), x=all[k];
+  if(x && Date.now()-x.ts<BETA_GEO_CACHE_MS) return x;
+  return null;
+}
+function betaGeocodeCachePut(query,value){
+  const all=betaReadJson(BETA_GEO_CACHE_KEY,{}), k=String(query||"").trim().toLowerCase();
+  all[k]={...value,ts:Date.now()};
+  const keys=Object.keys(all).sort((a,b)=>(all[b]?.ts||0)-(all[a]?.ts||0)).slice(0,30);
+  betaWriteJson(BETA_GEO_CACHE_KEY,Object.fromEntries(keys.map(k=>[k,all[k]])));
+}
+function betaNearbyCacheGet(key){
+  const all=betaReadJson(BETA_NEARBY_CACHE_KEY,{}), x=all[key];
+  if(x && Date.now()-x.ts<BETA_NEARBY_CACHE_MS && Array.isArray(x.shops)) return x;
+  return null;
+}
+function betaNearbyCachePut(key,value){
+  const all=betaReadJson(BETA_NEARBY_CACHE_KEY,{});
+  all[key]={...value,ts:Date.now()};
+  const keys=Object.keys(all).sort((a,b)=>(all[b]?.ts||0)-(all[a]?.ts||0)).slice(0,12);
+  betaWriteJson(BETA_NEARBY_CACHE_KEY,Object.fromEntries(keys.map(k=>[k,all[k]])));
+}
+async function betaRespectNominatimRate(){
+  const last=Number(localStorage.getItem(BETA_NOMINATIM_LAST_KEY)||0);
+  const wait=Math.max(0,1100-(Date.now()-last));
+  if(wait) await betaSleep(wait);
+  localStorage.setItem(BETA_NOMINATIM_LAST_KEY,String(Date.now()));
+}
+async function betaResolveLocation(){
+  const loc=betaActiveLocation;
+  if(Number.isFinite(loc?.lat)&&Number.isFinite(loc?.lng)) return {lat:loc.lat,lng:loc.lng,name:loc.label||"目前位置"};
+  const query=String(loc?.address||loc?.label||"").trim();
+  if(!query) throw new Error("沒有可以解析的地點文字");
+  const cached=betaGeocodeCacheGet(query);
+  if(cached){
+    loc.lat=cached.lat; loc.lng=cached.lng; loc.resolvedName=cached.name||query; betaRememberSession(loc);
+    return {lat:cached.lat,lng:cached.lng,name:cached.name||query,fromCache:true};
+  }
+  betaNearby.status="geocoding"; betaNearby.error=""; betaRenderScanStatus(); updatePoolInfo();
+  await betaRespectNominatimRate();
+  const url=`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=3&accept-language=zh-TW&q=${encodeURIComponent(query)}`;
+  const res=await fetch(url,{headers:{"Accept":"application/json"}});
+  if(!res.ok) throw new Error(`地點解析失敗（${res.status}）`);
+  const data=await res.json();
+  if(!Array.isArray(data)||!data.length) throw new Error(`找不到「${query}」的位置`);
+  const best=data[0], lat=Number(best.lat), lng=Number(best.lon);
+  if(!Number.isFinite(lat)||!Number.isFinite(lng)) throw new Error("位置座標格式不正確");
+  const name=best.display_name||query;
+  loc.lat=lat; loc.lng=lng; loc.resolvedName=name; betaRememberSession(loc);
+  if(!loc.temporary && loc.kind==="address"){
+    const list=betaSavedLocations(); const i=list.findIndex(x=>x.id===loc.id);
+    if(i>=0){ list[i]={...list[i],lat,lng,resolvedName:name}; betaSaveLocations(list); }
+  }
+  betaGeocodeCachePut(query,{lat,lng,name});
+  return {lat,lng,name};
+}
+async function betaOverpassFetch(lat,lng,radius){
+  const q=`[out:json][timeout:25];(nwr(around:${radius},${lat},${lng})[\"amenity\"~\"^(restaurant|fast_food|cafe|food_court)$\"];nwr(around:${radius},${lat},${lng})[\"shop\"~\"^(bakery|deli|convenience)$\"];);out center tags qt;`;
+  const res=await fetch("https://overpass-api.de/api/interpreter",{
+    method:"POST",
+    headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8","Accept":"application/json"},
+    body:"data="+encodeURIComponent(q)
+  });
+  if(!res.ok){
+    if(res.status===429||res.status===406) throw new Error("免費附近搜尋目前太忙，請約 30 秒後再試");
+    throw new Error(`附近店家搜尋失敗（${res.status}）`);
+  }
+  const data=await res.json();
+  return Array.isArray(data?.elements)?data.elements:[];
+}
+function betaLoadNearbyCacheForActive(){
+  if(!betaExternalLocation()) return false;
+  const key=betaLocationKey();
+  const x=betaNearbyCacheGet(key);
+  if(!x) return false;
+  betaNearby={locationId:betaActiveLocation.id,status:"ready",shops:x.shops||[],radius:x.radius||1200,lat:x.lat,lng:x.lng,resolvedName:x.resolvedName||"",error:"",fromCache:true,startedAt:0};
+  if(Number.isFinite(x.lat)&&Number.isFinite(x.lng)){ betaActiveLocation.lat=x.lat; betaActiveLocation.lng=x.lng; }
+  return betaNearby.shops.length>0;
+}
+async function betaSearchNearby(force=false,autoDecide=false){
+  if(!betaExternalLocation()) return;
+  if(betaNearby.status==="geocoding"||betaNearby.status==="searching") return;
+  if(!force && betaNearby.status==="ready" && betaNearby.shops.length){ if(autoDecide) decide(); return; }
+  if(!force && betaLoadNearbyCacheForActive()){
+    renderShops(); updateStats(); updatePoolInfo(); renderDataQuality();
+    if(autoDecide) decide();
+    return;
+  }
+  betaNearby={locationId:betaActiveLocation.id,status:"geocoding",shops:[],radius:0,lat:null,lng:null,resolvedName:"",error:"",fromCache:false,startedAt:Date.now()};
+  renderShops(); updatePoolInfo();
+  try{
+    const pos=await betaResolveLocation();
+    betaNearby.lat=pos.lat; betaNearby.lng=pos.lng; betaNearby.resolvedName=pos.name||"";
+    betaNearby.status="searching"; betaNearby.radius=1200; betaRenderScanStatus(); updatePoolInfo();
+    let els=await betaOverpassFetch(pos.lat,pos.lng,1200);
+    let shops=betaDedupeNearby(els.map(x=>betaNormalizeOsmElement(x,pos.lat,pos.lng)));
+    if(shops.length<18){
+      await betaSleep(1200);
+      betaNearby.radius=2200; betaRenderScanStatus(); updatePoolInfo();
+      els=await betaOverpassFetch(pos.lat,pos.lng,2200);
+      shops=betaDedupeNearby(els.map(x=>betaNormalizeOsmElement(x,pos.lat,pos.lng)));
+    }
+    betaNearby.status="ready"; betaNearby.shops=shops; betaNearby.error=""; betaNearby.fromCache=false;
+    betaNearbyCachePut(betaLocationKey(),{shops,radius:betaNearby.radius,lat:pos.lat,lng:pos.lng,resolvedName:betaNearby.resolvedName});
+    resetRound(false); renderShops(); updateStats(); updatePoolInfo(); renderDataQuality(); renderRecent();
+    if(!shops.length){ toast("這個地點的 OpenStreetMap 餐飲資料目前是 0 間"); return; }
+    toast(`附近找到 ${shops.length} 間`);
+    if(autoDecide) decide();
+  }catch(err){
+    console.error(err);
+    betaNearby.status="error"; betaNearby.error=String(err?.message||err); betaNearby.shops=[];
+    renderShops(); updatePoolInfo(); renderDataQuality();
+    showBetaNearbyError(err);
+  }
+}
+function showBetaNearbyError(err){
+  const result=document.getElementById("result"); if(!result) return;
+  result.className="result show";
+  result.innerHTML=`<div class="beta-search-preview">
+    <span class="beta-preview-badge">NEARBY BETA</span>
+    <div class="beta-preview-title">附近搜尋沒有成功</div>
+    <div class="beta-preview-address">${betaEsc(String(err?.message||err))}</div>
+    <div class="beta-preview-actions"><button onclick="betaSearchNearby(true,false)">再試一次</button><a href="${betaMapsNearbyUrl()}" target="_blank" rel="noopener">先用 Google Maps 看附近</a></div>
+    <div class="beta-osm-attrib">公開免費服務可能忙碌；若收到 429/406，請稍等約 30 秒再試。Nearby data © OpenStreetMap contributors.</div>
+  </div>`;
+}
+function betaEnsureNearbyThenDecide(){
+  if(!betaExternalLocation()){ decide(); return; }
+  if(betaNearby.status==="ready" && betaNearby.shops.length){ decide(); return; }
+  betaSearchNearby(false,true);
+}
+
 function betaEsc(v){
   return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
@@ -1292,13 +1573,14 @@ function applyBetaLocationUI(){
   const mobile=document.getElementById("mobileHomeBtn");
   if(trigger) trigger.textContent=label;
   if(cardName) cardName.textContent=label;
-  if(cardSub) cardSub.textContent=loc.kind==="builtin"?"正式資料庫已接上":(loc.temporary?"這次用就好・附近搜尋尚未接上":"常用地點・附近搜尋尚未接上");
+  if(cardSub) cardSub.textContent=loc.kind==="builtin"?"正式資料庫已接上":betaNearbyStatusText();
   if(homeLabel) homeLabel.textContent=`📍 ${label}${loc.kind==="builtin"?"附近":""}`;
   if(mobile) mobile.textContent=label.length>5?label.slice(0,5)+"…":label;
   document.body.classList.toggle("beta-external-location",betaExternalLocation());
+  if(betaExternalLocation() && betaNearby.locationId!==loc.id){ betaResetNearby(); betaLoadNearbyCacheForActive(); }
 
   document.querySelectorAll(".decide,.mobile-decide").forEach(b=>{
-    b.textContent=betaExternalLocation()?"🔎 看這附近怎麼找":"🍚 幫我決定";
+    b.textContent=betaExternalLocation()?"🔎 搜附近再幫我決定":"🍚 幫我決定";
   });
 
   if(betaExternalLocation()){
@@ -1351,6 +1633,7 @@ function closeBetaAddressModal(){
 }
 function selectBetaBuiltin(home){
   betaActiveLocation=betaBuiltin(home);
+  betaResetNearby();
   try{ sessionStorage.removeItem(BETA_LOCATION_SESSION_KEY); }catch(e){}
   setHome(home);
   closeBetaLocationModal();
@@ -1361,10 +1644,12 @@ function selectBetaSaved(id){
   const loc=betaSavedLocations().find(x=>x.id===id);
   if(!loc) return;
   betaActiveLocation={...loc,temporary:false};
+  betaResetNearby();
   betaRememberSession(betaActiveLocation);
   closeBetaLocationModal();
   applyBetaLocationUI();
   toast(`已切到 ${betaActiveLocation.label}`);
+  setTimeout(()=>betaSearchNearby(false,false),180);
 }
 function deleteBetaSaved(id,event){
   event?.stopPropagation?.();
@@ -1385,7 +1670,7 @@ function useBetaAddress(saveIt){
   const loc={
     id:(saveIt?"saved_":"temp_")+Date.now(),
     kind:"address",
-    label:typedName || (saveIt?betaShortAddress(address):"臨時地點"),
+    label:typedName || betaShortAddress(address),
     address,
     temporary:!saveIt,
     createdAt:Date.now()
@@ -1397,10 +1682,12 @@ function useBetaAddress(saveIt){
     loc.temporary=false;
   }
   betaActiveLocation=loc;
+  betaResetNearby();
   betaRememberSession(loc);
   closeBetaAddressModal();
   applyBetaLocationUI();
   toast(saveIt?"已存成常用地點":"這次先用這個地點");
+  setTimeout(()=>betaSearchNearby(false,false),180);
 }
 function useBetaCurrentLocation(){
   if(!navigator.geolocation){ toast("這個瀏覽器不支援定位"); return; }
@@ -1418,11 +1705,13 @@ function useBetaCurrentLocation(){
         temporary:true,
         createdAt:Date.now()
       };
+      betaResetNearby();
       betaRememberSession(betaActiveLocation);
       closeBetaLocationModal();
       applyBetaLocationUI();
-      toast("已取得目前位置");
+      toast("已取得目前位置，開始找附近店家");
       if(btn){ btn.disabled=false; btn.textContent="◎ 使用目前位置"; }
+      setTimeout(()=>betaSearchNearby(false,false),180);
     },
     err=>{
       if(btn){ btn.disabled=false; btn.textContent="◎ 使用目前位置"; }
@@ -1433,27 +1722,7 @@ function useBetaCurrentLocation(){
   );
 }
 function showBetaLocationSearchPreview(){
-  const loc=betaActiveLocation;
-  const detail=betaLocationDetail(loc);
-  const result=document.getElementById("result");
-  if(!result) return;
-  result.className="result show";
-  result.innerHTML=`<div class="beta-search-preview">
-    <span class="beta-preview-badge">LOCATION BETA</span>
-    <div class="beta-preview-title">${betaEsc(loc.label)}</div>
-    <div class="beta-preview-address">${betaEsc(detail)}</div>
-    <div class="beta-scan-flow">
-      下一階段預計：<br>
-      ① 先找約 1 km 內店家 → ② 太少就擴到 2 km → ③ 再擴到約 10–15 分鐘生活圈<br>
-      然後與你現有資料庫合併、去重，再套用咖啡廳／知名連鎖／預算／營業狀態等條件。
-    </div>
-    <div class="beta-preview-actions">
-      <button onclick="openBetaLocationModal()">換一個地點</button>
-      <a href="${betaMapsNearbyUrl()}" target="_blank" rel="noopener">先用 Google Maps 看附近</a>
-    </div>
-    <div class="note" style="margin-top:12px">這版刻意停在這裡：目前還沒接附近店家資料源，所以不會把竹北或台南資料假裝成這個地址附近的餐廳。</div>
-  </div>`;
-  result.scrollIntoView({behavior:"smooth",block:"center"});
+  if(betaExternalLocation()) betaSearchNearby(false,false);
 }
 
 function store(){
@@ -1489,7 +1758,11 @@ function effectivePrice(shop){
   return Number(shop.price)||0;
 }
 function mapsSearchUrl(shop){
-  const q=encodeURIComponent(`${shop?.name||""} ${shop?.address||""}`.trim());
+  let raw=`${shop?.name||""} ${shop?.address||""}`.trim();
+  if(shop?.sourceKind==="osmNearby" && Number.isFinite(shop.osmLat) && Number.isFinite(shop.osmLon)){
+    raw=`${shop.name||"餐廳"} ${shop.address||""} ${shop.osmLat},${shop.osmLon}`.trim();
+  }
+  const q=encodeURIComponent(raw);
   return `https://www.google.com/maps/search/?api=1&query=${q}`;
 }
 function reportIssue(id,type){
@@ -1560,6 +1833,7 @@ function duplicateCount(home=state?.home||"hsinchu"){
   return dup;
 }
 function homeShops(home=state?.home||"hsinchu"){
+  if(betaExternalLocation()) return betaNearby.status==="ready" ? (betaNearby.shops||[]) : [];
   const out=[], seen=new Set();
   for(const s of rawHomeShops(home)){
     const key=`${shopNorm(s.name)}|${shopNorm(s.address)}`;
@@ -1647,9 +1921,13 @@ function importData(event){
 }
 function renderDataQuality(){
   if(betaExternalLocation()){
-    ["qTotal","qHours","qPrice","qCustom","qMenu","qDupes","qVerified","qStale","qNeedsReview","qReported"].forEach(id=>{
-      const e=document.getElementById(id); if(e) e.textContent="—";
-    });
+    const list=homeShops();
+    const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+    set("qTotal",list.length||"—");
+    set("qHours",list.length?`${Math.round(list.filter(s=>s.osmOpeningHours).length/list.length*100)}%`:"—");
+    set("qPrice","0%"); set("qCustom",0); set("qMenu",0); set("qDupes",0);
+    set("qVerified",list.length?"OSM":"—"); set("qStale",0); set("qNeedsReview",0);
+    const reported=list.filter(s=>hasIssue(s.id)).length; set("qReported",reported);
     return;
   }
   const list=homeShops();
@@ -1790,7 +2068,7 @@ function ratingValue(r){
 }
 function allShops(){
   const d=store();
-  return [...(DB.hsinchu||[]),...(DB.tainan||[]),...(d.customShops||[])].filter(Boolean);
+  return [...(DB.hsinchu||[]),...(DB.tainan||[]),...(d.customShops||[]),...(betaNearby?.shops||[])].filter(Boolean);
 }
 function tasteStats(){
   const d=store();
@@ -1913,6 +2191,12 @@ function unblockShop(id){
 }
 function distanceTier(shop){
   if(!shop) return 99;
+  if(shop.sourceKind==="osmNearby" && Number.isFinite(shop._distanceMeters)){
+    if(shop._distanceMeters<=500) return 0;
+    if(shop._distanceMeters<=1000) return 1;
+    if(shop._distanceMeters<=1600) return 2;
+    return 3;
+  }
   if(shop.tags?.includes("homeoption")) return 0;
   const a=(shop.address||"").replace(/\s/g,"");
   if(state.home==="hsinchu"){
@@ -1941,6 +2225,10 @@ function distanceTier(shop){
   return 2;
 }
 function distanceLabel(shop){
+  if(shop?.sourceKind==="osmNearby" && Number.isFinite(shop._distanceMeters)){
+    const d=shop._distanceMeters;
+    return d<1000?`🚶 ${d} m`:`🛵 ${(d/1000).toFixed(1)} km`;
+  }
   const t=distanceTier(shop);
   return ["🏠 很近","🛵 近距離","🛵 約 10 分圈","🛵 最遠約 15 分圈"][t] || "距離待估";
 }
@@ -1982,7 +2270,7 @@ function setDistance(v){
   criteriaChanged();
 }
 function rememberDrawHistory(shop){
-  const item={id:shop.id,home:state.home,ts:Date.now(),cat:shop.cat,name:shop.name,address:shop.address};
+  const item={id:shop.id,home:betaExternalLocation()?betaActiveLocation.id:state.home,ts:Date.now(),cat:shop.cat,name:shop.name,address:shop.address};
   state.drawHistory=[item,...state.drawHistory.filter(x=>!(x.id===shop.id && x.home===state.home))].slice(0,8);
   localStorage.setItem("fd_beta25_draw_history",JSON.stringify(state.drawHistory));
   renderRecent();
@@ -1996,7 +2284,8 @@ function clearDrawHistory(){
 function renderRecent(){
   const el=document.getElementById("recentList");
   if(!el) return;
-  const items=state.drawHistory.filter(x=>x.home===state.home).slice(0,6);
+  const recentKey=betaExternalLocation()?betaActiveLocation.id:state.home;
+  const items=state.drawHistory.filter(x=>x.home===recentKey).slice(0,6);
   if(!items.length){
     el.innerHTML='<div class="empty">還沒開始抽。抽過的店會留在這裡，方便你比較。</div>';
     return;
@@ -2038,12 +2327,12 @@ function filteredBase(){
     .filter(s=>!isIssueExcluded(s))
     .filter(s=>!avoided(s));
 
-  if(state.filters.has("cheap")) out=out.filter(s=>effectivePrice(s)>0 && effectivePrice(s)<=200);
-  if(state.filters.has("late")) out=out.filter(isLateShop);
+  if(state.filters.has("cheap")) out=out.filter(s=>betaExternalLocation()?(!(effectivePrice(s)>0)||effectivePrice(s)<=200):(effectivePrice(s)>0 && effectivePrice(s)<=200));
+  if(state.filters.has("late")) out=out.filter(s=>betaExternalLocation()?(isLateShop(s)||!s.osmOpeningHours):isLateShop(s));
   if(state.filters.has("light")) out=out.filter(s=>s.tags.includes("light"));
   if(state.filters.has("cafe")) out=out.filter(s=>cuisineGroups(s).has("cafe"));
   if(state.filters.has("chain")) out=out.filter(s=>s.tags?.includes("chain"));
-  if(state.filters.has("feast")) out=out.filter(s=>s.tags.includes("feast"));
+  if(state.filters.has("feast")) out=out.filter(s=>betaExternalLocation()?(s.tags.includes("chain")||s.cat.includes("餐廳")||s.cat.includes("料理")):s.tags.includes("feast"));
 
   if(state.distance==="smart"){
     // v22: 智慧模式不再硬性縮到第一個「夠用」的小圈。
@@ -2057,6 +2346,14 @@ function filteredBase(){
 }
 function eligible(){
   const base=filteredBase();
+  if(betaExternalLocation()){
+    const notes=[];
+    notes.push(`OSM 附近實搜 ${betaNearby.shops.length} 間`);
+    if(state.availability!=="all") notes.push("公開資料沒有可靠即時營業狀態，因此不硬性排除未知時段");
+    if(state.filters.has("cheap")||state.budget!=="any") notes.push("多數店家沒有價格資料，預算只套用在已知價格");
+    state.poolStrategy=notes.join("｜");
+    return base;
+  }
   state.poolStrategy=state.distance==="smart"?"智慧距離：15 分生活圈全部保留，近店只提高排序":"";
 
 
@@ -2205,7 +2502,7 @@ function categoryKey(s){
 }
 function bagSignatureFor(list){
   return [
-    state.home,
+    betaExternalLocation()?betaActiveLocation.id:state.home,
     state.mode,
     state.availability,
     state.distance,
@@ -2306,10 +2603,18 @@ function updatePoolInfo(){
   const round=document.getElementById("roundInfo");
   if(!el) return;
   if(betaExternalLocation()){
-    el.textContent=`${betaActiveLocation.label}｜等待接上附近店家搜尋資料源｜預計自動由 1 km → 2 km → 約 10–15 分鐘擴張`;
-    if(round) round.textContent="Beta：目前只測地點流程";
     const ctx=document.getElementById("autoContext");
-    if(ctx) ctx.innerHTML=`<b>${betaEsc(betaActiveLocation.label)}</b>｜地點已選好<br>下一階段才會開始抓附近餐廳；現在不會混用竹北／台南候選池。`;
+    if(betaNearby.status!=="ready"){
+      el.textContent=`${betaActiveLocation.label}｜${betaNearbyStatusText()}`;
+      if(round) round.textContent="Nearby Beta：等附近資料準備好就能抽";
+      if(ctx) ctx.innerHTML=`<b>${betaEsc(betaActiveLocation.label)}</b>｜${betaEsc(betaNearbyStatusText())}<br>資料來源：OpenStreetMap；不會混用竹北／台南固定候選池。`;
+      betaRenderScanStatus();
+      return;
+    }
+    const pool=eligible(), cats=new Set(pool.map(categoryKey)).size;
+    el.textContent=`${betaActiveLocation.label}｜附近實搜 ${betaNearby.shops.length} 間｜目前條件可抽 ${pool.length} 間・${cats} 種料理｜掃描半徑約 ${Math.round(betaNearby.radius/100)/10} km｜${state.poolStrategy}`;
+    if(round) round.textContent=state.roundTotal>0?`本輪已看 ${state.roundSeen}/${state.roundTotal} 間・同一輪不重複`:`本輪尚未開始・同一輪不重複`;
+    if(ctx) ctx.innerHTML=`<b>${betaEsc(betaActiveLocation.label)}</b>｜OSM 附近實搜<br>${betaNearby.fromCache?"使用 6 小時內快取・":""}店家營業時間／價格可能缺漏，點店名可到 Google Maps 核對。`;
     return;
   }
   const base=filteredBase(), pool=eligible();
@@ -2351,7 +2656,8 @@ function updatePoolInfo(){
 }
 function reason(s){
   const u=userInfo(s.id), reasons=[];
-  if(isHomeOption(s)) reasons.push("不用出門，作為最後備案");
+  if(s.sourceKind==="osmNearby" && Number.isFinite(s._distanceMeters)) reasons.push(`離目前地點約 ${s._distanceMeters<1000?s._distanceMeters+" 公尺":(s._distanceMeters/1000).toFixed(1)+" 公里"}`);
+  else if(isHomeOption(s)) reasons.push("不用出門，作為最後備案");
   else if(distanceTier(s)===0) reasons.push("就在住家附近生活圈");
   else if(distanceTier(s)<=2) reasons.push("在你平常願意移動的範圍");
   if(confirmedOpen(s)) reasons.push("營業時段近期核對且現在符合");
@@ -2383,7 +2689,11 @@ function showRuntimeError(err){
   result.scrollIntoView({behavior:"smooth",block:"center"});
 }
 function safeDecide(){
-  if(betaExternalLocation()){ showBetaLocationSearchPreview(); return; }
+  if(betaExternalLocation()){
+    try{ betaEnsureNearbyThenDecide(); }
+    catch(err){ showRuntimeError(err); }
+    return;
+  }
   try{ decide(); }
   catch(err){ showRuntimeError(err); }
 }
@@ -2391,6 +2701,11 @@ function decide(){
   const list=eligible();
   if(!list.length){
     const result=document.getElementById("result");
+    if(betaExternalLocation()){
+      result.className="result show";
+      result.innerHTML=`<div class="card empty" style="text-align:left"><div style="font-weight:900;font-size:16px;margin-bottom:8px">這個條件下目前是 0 間</div><div style="line-height:1.7">附近掃描有 ${betaNearby.shops.length} 間，但目前篩選把候選清空了。你可以清空今天條件，或重新掃一次。</div><div class="beta-preview-actions"><button onclick="resetConditions()">清空今天條件</button><button onclick="betaSearchNearby(true,false)">重新掃附近</button></div></div>`;
+      return;
+    }
     const base=filteredBase();
     const knownOpen=base.filter(isOpen).length;
     result.className="result show";
@@ -2456,6 +2771,7 @@ function pickDish(id){
 }
 function verificationInfo(shop){
   if(!shop) return {level:"stale",label:"久未確認",cls:"verify-stale",source:""};
+  if(shop.sourceKind==="osmNearby") return {level:"partial",label:"OSM 附近資料",cls:"verify-partial",source:"OpenStreetMap 即時附近 POI（非即時營業狀態）"};
   if(shop.custom) return {level:"partial",label:"自己新增",cls:"verify-partial",source:"使用者資料"};
   if(shop.verifyKind==="recent" && shop.verifiedAt){
     const t=Date.parse(shop.verifiedAt);
@@ -2511,7 +2827,8 @@ function renderPick(s){
         verificationInfo(s).source
           ? `店家資料：${verificationInfo(s).source}${s.verifiedAt?`・${s.verifiedAt}`:""}`
           : "店家存在狀態尚未近期外部核對"
-      }${hasHours(s)?`<br>營業時段：${hoursVerificationInfo(s).source||"既有資料"}${s.hoursCheckedAt?`・${s.hoursCheckedAt}`:""}`:""}</div>
+      }${hasHours(s)?`<br>營業時段：${hoursVerificationInfo(s).source||"既有資料"}${s.hoursCheckedAt?`・${s.hoursCheckedAt}`:""}`:""}${s.sourceKind==="osmNearby"&&s.osmOpeningHours?`<br>OSM opening_hours：${betaEsc(s.osmOpeningHours)}（僅原始標記，App 暫不宣稱即時營業）`:""}</div>
+      ${s.sourceKind==="osmNearby"?'<div class="beta-osm-attrib">Nearby data © OpenStreetMap contributors・價格與評分未由 OSM 提供</div>':""}
       
       <div class="reason"><b>為什麼今天選它？</b><br>${reason(s)}</div>
       <div class="actions">
@@ -2564,7 +2881,7 @@ function reroll(){
 }
 function ate(id){
   const d=store();
-  d.history.push({id,home:state.home,ts:Date.now(),dish:state.selectedDish?.shopId===id?state.selectedDish.name:null,dishPrice:state.selectedDish?.shopId===id?state.selectedDish.price:0});
+  d.history.push({id,home:betaExternalLocation()?betaActiveLocation.id:state.home,ts:Date.now(),dish:state.selectedDish?.shopId===id?state.selectedDish.name:null,dishPrice:state.selectedDish?.shopId===id?state.selectedDish.price:0});
   save(d);
   document.getElementById("ratingPanel").classList.add("show");
   updateStats(); renderShops(); toast("已記錄這一餐 ✓");
@@ -2632,10 +2949,14 @@ function setShopTab(t){
   if(["unknownhours","unknownprice","needsreview","reported"].includes(t)) document.getElementById("shopList")?.scrollIntoView({behavior:"smooth",block:"start"});
 }
 function renderShops(){
-  if(betaExternalLocation()){
-    const c=document.getElementById("shopCount"); if(c) c.textContent="—";
+  if(betaExternalLocation() && betaNearby.status!=="ready"){
+    const c=document.getElementById("shopCount"); if(c) c.textContent=betaNearby.status==="error"?"搜尋失敗":"搜尋中";
     const l=document.getElementById("shopList");
-    if(l) l.innerHTML=`<div class="empty" style="line-height:1.7"><b>${betaEsc(betaActiveLocation.label)}</b><br>附近店家自動搜尋會在下一階段接上。<br>這個 Beta 不會偷顯示上一個城市的資料。</div>`;
+    if(l){
+      if(betaNearby.status==="error") l.innerHTML=`<div class="beta-scan-box"><div class="beta-scan-title">${betaEsc(betaNearbyStatusText())}</div><div class="beta-preview-actions" style="margin-top:10px"><button onclick="betaSearchNearby(true,false)">再搜一次</button></div></div>`;
+      else if(betaNearby.status==="idle") l.innerHTML=`<div class="empty" style="line-height:1.7"><b>${betaEsc(betaActiveLocation.label)}</b><br>按「搜尋附近再幫我決定」，或稍等自動搜尋開始。</div>`;
+      else betaRenderScanStatus();
+    }
     return;
   }
   let list=homeShops();
@@ -2653,8 +2974,9 @@ function renderShops(){
   const q=(document.getElementById("shopSearch")?.value||"").trim().toLowerCase();
   if(q) list=list.filter(s=>`${s.name} ${s.cat} ${s.address}`.toLowerCase().includes(q));
   list=[...list].sort((a,b)=>distanceTier(a)-distanceTier(b) || (b.rating||0)-(a.rating||0));
-  document.getElementById("shopCount").textContent=`${homeShops().length} 間`;
-  document.getElementById("shopList").innerHTML=list.length?list.map(s=>{
+  document.getElementById("shopCount").textContent=betaExternalLocation()?`${homeShops().length} 間・OSM`:`${homeShops().length} 間`;
+  const sourcePrefix=betaExternalLocation()?`<div class="beta-live-source"><span class="beta-source-chip">● OSM 附近實搜</span><span class="beta-source-chip warn">營業／價格需核對</span></div><div class="beta-osm-attrib">Nearby data © OpenStreetMap contributors</div>`:"";
+  document.getElementById("shopList").innerHTML=list.length?sourcePrefix+list.map(s=>{
     const u=userInfo(s.id), rr=["","❌","😐","🙂","😍"][u.rating]||"";
     const status=openStatus(s);
     const statusText=status==="open"?"營業中・已核對":status==="closed"?"休息中・已核對":status==="likely-open"?"推測營業":status==="likely-closed"?"推測休息":"時間待確認";
@@ -2670,7 +2992,8 @@ function renderShops(){
           ${s.custom?'<span class="custom-tag">自己新增</span>':""}
           ${s.dishes?.length?`<span class="menu-fresh">有菜單 ${s.dishes.length} 項</span>`:""}
           <span class="${verificationInfo(s).cls}">${verificationInfo(s).label}</span>
-          ${(missingHours||missingPrice)?`<span class="data-warn">${missingHours&&missingPrice?"營業時間・價位待補":missingHours?"營業時間待補":"價位待補"}</span>`:""}
+          ${s.sourceKind==="osmNearby"&&s.osmOpeningHours?`<span class="mini-badge">OSM hours: ${betaEsc(s.osmOpeningHours)}</span>`:""}
+          ${(missingHours||missingPrice)?`<span class="data-warn">${s.sourceKind==="osmNearby"?"OSM 資料可能缺營業／價格":(missingHours&&missingPrice?"營業時間・價位待補":missingHours?"營業時間待補":"價位待補")}</span>`:""}
           ${blocked?'<span class="blocked-tag">暫不推薦</span>':""}
           ${issues.length?`<span class="issue-tag">${issues.join("・")}</span>`:""}
           ${dataAgeDays(s)>180?'<span class="review-tag">超過 180 天待複查</span>':""}
@@ -2690,12 +3013,6 @@ function renderShops(){
   renderDataQuality();
 }
 function updateStats(){
-  if(betaExternalLocation()){
-    ["statEaten","statTried","statLiked","statBlocked"].forEach(id=>{
-      const e=document.getElementById(id); if(e) e.textContent="—";
-    });
-    return;
-  }
   const d=store(), homeIds=new Set(homeShops().map(s=>s.id));
   const hist=d.history.filter(x=>homeIds.has(x.id));
   const tried=new Set(hist.map(x=>x.id));

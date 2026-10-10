@@ -1,32 +1,36 @@
-Location Beta 測試方式
+v26 Nearby Search Beta
 ======================
 
-這不是正式版更新。請把下面 2 個檔案上傳到 food-deciderV1 repository 的根目錄：
+上傳方式
+--------
+把這個 ZIP 裡的 beta.html 與 sw.js 上傳到 food-deciderV1 repository 根目錄。
+- beta.html：覆蓋上一版 Beta
+- sw.js：覆蓋原本版本（它會讓正式版 PWA 不攔截 beta.html）
+- 不要動 index.html，因此正式 v24 不受影響。
 
-1. beta.html   （新增，不會覆蓋 index.html）
-2. sw.js       （覆蓋原本 sw.js；只多一條規則：不要把 Beta 頁面塞進正式版離線快取）
-
-上傳並 Commit 後，正式版網址完全不變：
-https://hsuaan.github.io/food-deciderV1/
-
-Beta 測試網址：
+Beta 網址
+---------
 https://hsuaan.github.io/food-deciderV1/beta.html
 
-這個 Beta 已經可以測：
-- 竹北家 / 台南家切換
-- 輸入任意地址
-- 「這次用就好」
-- 「儲存成常用地點」
-- 刪除常用地點
-- 使用目前位置（瀏覽器會詢問定位權限）
-- 臨時/自訂地點不會錯用竹北或台南餐廳資料
-- 點「看這附近怎麼找」會看到下一階段預計的 1 km → 2 km → 10–15 分鐘掃描流程
-- 可先跳 Google Maps 看該地址附近餐廳
+這一版真的會做什麼
+------------------
+1. 輸入「台北車站」、西門町、飯店名稱或地址。
+2. 文字地點在你觸發搜尋時，以 OpenStreetMap Nominatim 解析座標。
+3. 用 OpenStreetMap Overpass 抓附近 restaurant / fast_food / cafe / food_court / bakery / deli / convenience。
+4. 先掃約 1.2 km；若命名店家少於 18 間，才依序再查約 2.2 km。
+5. 查詢不平行執行，結果會快取：地點解析約 30 天、附近結果約 6 小時。
+6. 抓到的店直接接進原本「幫我決定 / 三選一 / 咖啡廳 / 知名連鎖 / 排除類型」流程。
+7. 點店名仍可到 Google Maps 核對。
 
-刻意還沒做：
-- 自動抓取任意地址附近的實際餐廳
-- 把外地餐廳永久合併進主資料庫
-- 地址轉座標 / 反向地址解析
+重要限制
+--------
+- OpenStreetMap 在台灣的店家覆蓋度通常不如 Google Maps，這版重點是驗證「任意地點 → 自動抓附近店 → 直接抽」整條流程。
+- OSM 多數店家沒有價格、公開評分，opening_hours 也不一定有，所以 Beta 不會假裝知道即時營業狀態。
+- 「只看營業中」在外地 OSM 模式不會硬刪未知時段店家，避免誤判。
+- 輸入文字地點/地址會送到 Nominatim 解析；若不想傳送私人地址，可改用「目前位置」。
+- 公開 Nominatim / Overpass 是共享免費服務，遇到 429/406 請至少等約 30 秒再試。
 
-Beta 的個人資料使用獨立 localStorage key，不會修改正式 v24 的評分、黑名單、歷史紀錄。
-你在 Beta 輸入的地址只留在自己的瀏覽器，不在公開原始碼裡。
+資料來源
+--------
+Geocoding / nearby POI data © OpenStreetMap contributors.
+正式 v24 的 index.html、正式評分/黑名單/歷史不會被這個 Beta 修改。
