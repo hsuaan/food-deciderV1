@@ -144,6 +144,11 @@ button,input,select{font:inherit}
 .report-btn.warn{background:#fff4e7;color:#80551f;border-color:#ead4b2}
 .report-btn.danger{background:#fff0ef;color:#8b3530;border-color:#ebceca}
 .map-link{display:inline-flex;align-items:center;text-decoration:none;border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 9px;font-size:10px;color:#58645c;font-weight:800}
+.shop-name-link{color:inherit;text-decoration:none;border-bottom:1px dashed rgba(39,63,50,.30);cursor:pointer}
+.shop-name-link:hover{border-bottom-style:solid}
+.shop-name-link:active{opacity:.65}
+.shop-name-click{border-bottom:1px dashed rgba(39,63,50,.30);cursor:pointer}
+
 .issue-tag{display:inline-flex;background:#fff0ef;color:#8b3530;border-radius:999px;padding:5px 8px;font-size:10px;font-weight:850;margin-top:5px}
 .review-tag{display:inline-flex;background:#fff0d9;color:#7b5521;border-radius:999px;padding:5px 8px;font-size:10px;font-weight:850;margin-top:5px}
 .coverage-box{margin-top:12px;background:#f6f5f1;border:1px solid var(--line);border-radius:15px;padding:12px}
@@ -263,7 +268,7 @@ button,a{touch-action:manipulation}
     </div>
   </div>
   <div class="top">
-    <div class="brand">FOOD DECIDER · v22</div>
+    <div class="brand">FOOD DECIDER · v23</div>
     <button id="installPill" class="install-pill" onclick="installFoodApp()">＋ 加到主畫面</button>
     <div class="home-switch">
       <button id="h-hsinchu" class="active" onclick="setHome('hsinchu')">竹北家</button>
@@ -274,7 +279,7 @@ button,a{touch-action:manipulation}
   <section class="hero">
     <div class="eyebrow" id="homeLabel">📍 竹北家附近</div>
     <h1>今天吃什麼？</h1>
-    <p>全生活圈可抽：智慧距離不再把較遠但仍在 15 分鐘內的店直接排除；近店只提高機率，不再壟斷候選池。</p>
+    <p>店名可直接點：抽到店家或瀏覽資料庫時，點店名就免費跳到 Google Maps 搜尋。</p>
     <button class="decide" onclick="safeDecide()">🍚 幫我決定</button>
     <div id="autoContext" class="context-card">正在判斷現在最適合怎麼找…</div>
     <div class="mode-row">
@@ -444,10 +449,10 @@ button,a{touch-action:manipulation}
       </div>
       <input id="shopSearch" class="searchbox" placeholder="搜尋店名、料理或地址…" oninput="renderShops()">
       <div id="shopList" class="shop-list"></div>
-      <div class="note">※ v22 修正智慧距離的核心問題：以前附近只要有約 6 間可吃，就會把更遠但仍在 15 分鐘內的店整批排除；現在整個生活圈都能抽，距離只影響排序。</div>
+      <div class="note">※ v23 新增免費 Google Maps 直達：抽選結果、三選一與店家資料庫的店名都可直接開啟 Google Maps 搜尋；不使用 Places API，也不產生 API 費用。</div>
     </div>
   </section>
-  <div class="build-note">v22 全生活圈可抽版 · Build 2026-10-10<br>個人紀錄只儲存在你的瀏覽器，可用「匯出備份」保存。<br>公開安全版：原始碼不含兩個住處的精確門牌；距離仍依既有生活圈分級規則運作。</div>
+  <div class="build-note">v23 店名直達 Google Maps 版 · Build 2026-10-10<br>個人紀錄只儲存在你的瀏覽器，可用「匯出備份」保存。<br>公開安全版：原始碼不含兩個住處的精確門牌；距離仍依既有生活圈分級規則運作。</div>
 </div>
 
 <div class="mobile-dock">
@@ -2035,8 +2040,8 @@ function renderPick(s){
         ${isFallbackOption(s)?'<span class="fallback-badge">備案選項</span>':""}
         <span class="${verificationInfo(s).cls}">${verificationInfo(s).label}</span>
       </div>
-      <h2>${s.name}</h2>
-      <div class="meta">📍 ${s.address}${getIssue(s.id).addressWrong?' <span class="issue-tag">地址待修正</span>':""}<br>⭐ ${s.rating ? s.rating.toFixed(1) : "—"}　・　${effectivePrice(s) ? `約 NT$${effectivePrice(s)}/人` : "價位待確認"}<br><span class="mini-badge">${distanceLabel(s)}</span><span class="period-badge">${mealPeriod().label}</span>${issueFlags(s.id).length?`<span class="issue-tag">${issueFlags(s.id).join("・")}</span>`:""}</div><div class="verify-note">${
+      <h2><a class="shop-name-link" target="_blank" rel="noopener" href="${mapsSearchUrl(s)}">${s.name}</a></h2>
+      <div class="auto-note">點店名可開 Google Maps</div><div class="meta">📍 ${s.address}${getIssue(s.id).addressWrong?' <span class="issue-tag">地址待修正</span>':""}<br>⭐ ${s.rating ? s.rating.toFixed(1) : "—"}　・　${effectivePrice(s) ? `約 NT$${effectivePrice(s)}/人` : "價位待確認"}<br><span class="mini-badge">${distanceLabel(s)}</span><span class="period-badge">${mealPeriod().label}</span>${issueFlags(s.id).length?`<span class="issue-tag">${issueFlags(s.id).join("・")}</span>`:""}</div><div class="verify-note">${
         verificationInfo(s).source
           ? `店家資料：${verificationInfo(s).source}${s.verifiedAt?`・${s.verifiedAt}`:""}`
           : "店家存在狀態尚未近期外部核對"
@@ -2079,7 +2084,7 @@ function renderThree(picks){
   result.className="result show";
   result.innerHTML=`<div class="pick-card"><span class="badge">三選一</span><h2>今天只准從這三間選</h2>
     <div class="choices">${picks.map(s=>`<button class="choice" onclick="state.currentPick=findShop('${s.id}');renderPick(state.currentPick)">
-      <strong>${s.name}</strong><small>${s.cat}・${distanceLabel(s)}・${effectivePrice(s) ? `約 NT$${effectivePrice(s)}` : "價位待確認"}・⭐ ${s.rating ? s.rating.toFixed(1) : "—"}</small>
+      <strong class="shop-name-click" onclick="event.stopPropagation();window.open('${mapsSearchUrl(s)}','_blank','noopener')">${s.name}</strong><small>${s.cat}・${distanceLabel(s)}・${effectivePrice(s) ? `約 NT$${effectivePrice(s)}` : "價位待確認"}・⭐ ${s.rating ? s.rating.toFixed(1) : "—"}</small>
     </button>`).join("")}</div></div>`;
   result.scrollIntoView({behavior:"smooth",block:"start"});
 }
@@ -2184,7 +2189,7 @@ function renderShops(){
     const missingHours=!hasHours(s), missingPrice=!(effectivePrice(s)>0), issues=issueFlags(s.id);
     return `<div class="shop">
       <div>
-        <div class="name">${s.name}</div>
+        <div class="name"><a class="shop-name-link" target="_blank" rel="noopener" href="${mapsSearchUrl(s)}">${s.name}</a></div>
         <div class="sub">${s.cat}・${effectivePrice(s)?`約 NT$${effectivePrice(s)}`:"價位待確認"}<br>${s.address}</div>
         <div class="shop-meta">
           <span class="mini-badge">${distanceLabel(s)}</span>
