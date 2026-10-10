@@ -1,0 +1,32 @@
+Location Beta 測試方式
+======================
+
+這不是正式版更新。請把下面 2 個檔案上傳到 food-deciderV1 repository 的根目錄：
+
+1. beta.html   （新增，不會覆蓋 index.html）
+2. sw.js       （覆蓋原本 sw.js；只多一條規則：不要把 Beta 頁面塞進正式版離線快取）
+
+上傳並 Commit 後，正式版網址完全不變：
+https://hsuaan.github.io/food-deciderV1/
+
+Beta 測試網址：
+https://hsuaan.github.io/food-deciderV1/beta.html
+
+這個 Beta 已經可以測：
+- 竹北家 / 台南家切換
+- 輸入任意地址
+- 「這次用就好」
+- 「儲存成常用地點」
+- 刪除常用地點
+- 使用目前位置（瀏覽器會詢問定位權限）
+- 臨時/自訂地點不會錯用竹北或台南餐廳資料
+- 點「看這附近怎麼找」會看到下一階段預計的 1 km → 2 km → 10–15 分鐘掃描流程
+- 可先跳 Google Maps 看該地址附近餐廳
+
+刻意還沒做：
+- 自動抓取任意地址附近的實際餐廳
+- 把外地餐廳永久合併進主資料庫
+- 地址轉座標 / 反向地址解析
+
+Beta 的個人資料使用獨立 localStorage key，不會修改正式 v24 的評分、黑名單、歷史紀錄。
+你在 Beta 輸入的地址只留在自己的瀏覽器，不在公開原始碼裡。
