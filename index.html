@@ -263,7 +263,7 @@ button,a{touch-action:manipulation}
     </div>
   </div>
   <div class="top">
-    <div class="brand">FOOD DECIDER · MOBILE</div>
+    <div class="brand">FOOD DECIDER · v21</div>
     <button id="installPill" class="install-pill" onclick="installFoodApp()">＋ 加到主畫面</button>
     <div class="home-switch">
       <button id="h-hsinchu" class="active" onclick="setHome('hsinchu')">竹北家</button>
@@ -274,7 +274,7 @@ button,a{touch-action:manipulation}
   <section class="hero">
     <div class="eyebrow" id="homeLabel">📍 竹北家附近</div>
     <h1>今天吃什麼？</h1>
-    <p>資料庫收尾：最後針對文興／復興／嘉豐外圈，以及崇學／崇善／榮譽／東門三段做補漏；不為了數字硬塞重複店。</p>
+    <p>漏網補強：把咖啡廳獨立成真正分類，並依實際漏網店反查長榮二段、崇善、開山／孔廟等生活圈。</p>
     <button class="decide" onclick="safeDecide()">🍚 幫我決定</button>
     <div id="autoContext" class="context-card">正在判斷現在最適合怎麼找…</div>
     <div class="mode-row">
@@ -292,6 +292,7 @@ button,a{touch-action:manipulation}
         <button class="chip" data-filter="cheap" onclick="toggleFilter(this)">💰 省一點</button>
         <button class="chip" data-filter="feast" onclick="toggleFilter(this)">🥩 想吃爽的</button>
         <button class="chip" data-filter="light" onclick="toggleFilter(this)">🥬 清淡一點</button>
+        <button class="chip" data-filter="cafe" onclick="toggleFilter(this)">☕ 咖啡廳</button>
         <button class="chip" data-filter="late" onclick="toggleFilter(this)">🌙 宵夜</button>
         <button class="chip" data-filter="new" onclick="toggleFilter(this)">🆕 沒吃過優先</button>
         <button class="chip" data-filter="quick" onclick="toggleFilter(this)">⚡ 快速解決</button>
@@ -412,7 +413,7 @@ button,a{touch-action:manipulation}
       </div>
       <div class="note" style="margin-top:12px">備份會包含吃過紀錄、評分、暫不推薦、自訂店家、偏好設定，以及你回報的店家問題。「今天沒開」只影響今天；「已歇業」或「地址有誤」會先退出推薦池，直到你恢復。</div>
       <div class="coverage-box">
-        <div class="coverage-title">這一輪的地毯式掃描範圍</div>
+        <div class="coverage-title">這一輪的地毯式掃描範圍</div><div class="note" style="margin-bottom:8px">v21：咖啡廳已獨立分類；並依 BitchFryFry／禾島／Abby coffee 等漏網樣本反查周邊。</div>
         <div class="coverage-chips">
           <span class="coverage-chip">竹北：勝利一～十三街／路</span>
           <span class="coverage-chip">竹北：十興路／嘉興路</span>
@@ -435,6 +436,7 @@ button,a{touch-action:manipulation}
         <button class="tab active" id="tab-all" onclick="setShopTab('all')">全部</button>
         <button class="tab" id="tab-fav" onclick="setShopTab('fav')">喜歡</button>
         <button class="tab" id="tab-untried" onclick="setShopTab('untried')">沒吃過</button>
+        <button class="tab" id="tab-cafe" onclick="setShopTab('cafe')">☕ 咖啡廳</button>
         <button class="tab" id="tab-blocked" onclick="setShopTab('blocked')">暫不推薦</button>
         <button class="tab" id="tab-custom" onclick="setShopTab('custom')">自己新增</button>
         <button class="tab" id="tab-verified" onclick="setShopTab('verified')">近期驗證</button>
@@ -442,10 +444,10 @@ button,a{touch-action:manipulation}
       </div>
       <input id="shopSearch" class="searchbox" placeholder="搜尋店名、料理或地址…" oninput="renderShops()">
       <div id="shopList" class="shop-list"></div>
-      <div class="note">※ v20 是資料庫收尾版：再補文興／復興／嘉豐南八街，以及崇學／崇善／榮譽／東門三段；有完整週營業時段才標成近期營業核對，只有近期店家索引的資料則保留營業時間待確認。</div>
+      <div class="note">※ v21 不再把總店數當完整度：咖啡廳改成獨立分類，並用實際漏網店反查區域。這輪補入長榮二段、崇善、開山／孔廟與東區咖啡店等明顯缺口。</div>
     </div>
   </section>
-  <div class="build-note">v20 資料庫收尾版 · Build 2026-10-09<br>個人紀錄只儲存在你的瀏覽器，可用「匯出備份」保存。<br>公開安全版：原始碼不含兩個住處的精確門牌；距離仍依既有生活圈分級規則運作。</div>
+  <div class="build-note">v21 咖啡分類與漏網補強版 · Build 2026-10-10<br>個人紀錄只儲存在你的瀏覽器，可用「匯出備份」保存。<br>公開安全版：原始碼不含兩個住處的精確門牌；距離仍依既有生活圈分級規則運作。</div>
 </div>
 
 <div class="mobile-dock">
@@ -934,7 +936,39 @@ const DB = {
     {id:"tn288",name:"榮哥鹹酥雞",cat:"鹹酥雞・炸物",price:100,rating:5.0,address:"榮譽街105號",tags:["cheap","late"],verifiedAt:"2026-10-09",verifySource:"愛食記近期公開索引",verifyKind:"recent",hours:{}},
     {id:"tn289",name:"初麵",cat:"麵食・小吃",price:100,rating:5.0,address:"榮譽街58-1號",tags:["cheap"],verifiedAt:"2026-10-09",verifySource:"愛食記近期公開索引",verifyKind:"recent",hours:{}},
     {id:"tn290",name:"正宗蘭州純手工拉麵",cat:"拉麵・麵食",price:130,rating:4.5,address:"榮譽街209號",tags:["cheap"],verifiedAt:"2026-10-09",verifySource:"愛食記近期公開索引",verifyKind:"recent",hours:{}},
-    {id:"tn291",name:"炸雞洋行",cat:"炸雞・小吃",price:50,rating:5.0,address:"榮譽街146號",tags:["cheap"],verifiedAt:"2026-10-09",verifySource:"愛食記近期公開索引",verifyKind:"recent",hours:{}}
+    {id:"tn291",name:"炸雞洋行",cat:"炸雞・小吃",price:50,rating:5.0,address:"榮譽街146號",tags:["cheap"],verifiedAt:"2026-10-09",verifySource:"愛食記近期公開索引",verifyKind:"recent",hours:{}},
+
+    {id:"tn292",name:"BitchFryFry 台南店",cat:"炸物・小吃・宵夜",price:200,rating:4.0,address:"長榮路二段63號",tags:["cheap","late"],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋＋近期公開索引",verifyKind:"recent",hoursCheckedAt:"2026-10-10",hoursSource:"Google Maps 商家搜尋",hours:{0:["17:00-24:00"],1:["17:00-24:00"],3:["17:00-24:00"],4:["17:00-24:00"],5:["17:00-24:00"],6:["17:00-24:00"]}},
+    {id:"tn293",name:"禾島He Dao｜義大利麵專賣",cat:"義大利麵・義式料理",price:300,rating:4.0,address:"崇善路205巷5號",tags:[],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋",verifyKind:"recent",hoursCheckedAt:"2026-10-10",hoursSource:"Google Maps 商家搜尋",hours:{0:["11:30-15:30","17:00-21:00"],1:["11:30-15:30","17:00-21:00"],2:["11:30-15:30","17:00-21:00"],3:["11:30-15:30","17:00-21:00"],4:["11:30-15:30","17:00-21:00"],5:["11:30-15:30","17:00-21:00"],6:["11:30-15:30","17:00-21:00"]}},
+    {id:"tn294",name:"Abby coffee",cat:"咖啡廳・甜點・深夜咖啡",price:200,rating:4.7,address:"開山路122巷56弄20號",tags:["light","late"],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋＋近期公開索引",verifyKind:"recent",hoursCheckedAt:"2026-10-10",hoursSource:"Google Maps 商家搜尋",hours:{0:["15:30-23:30"],2:["15:30-23:30"],3:["15:30-23:30"],4:["15:30-23:30"],5:["15:30-23:30"],6:["15:30-23:30"]}},
+    {id:"tn295",name:"神汸萃咖啡裕農門市",cat:"咖啡廳・精品咖啡",price:0,rating:4.8,address:"裕農路591號1樓",tags:["light"],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋",verifyKind:"recent",hoursCheckedAt:"2026-10-10",hoursSource:"Google Maps 商家搜尋",hours:{0:["07:10-11:00"],1:["07:10-15:00"],2:["07:10-15:00"],3:["07:10-15:00"],4:["07:10-15:00"],5:["07:10-15:00"],6:["07:10-15:00"]}},
+    {id:"tn296",name:"NOTHING but coffee",cat:"咖啡廳・精品咖啡",price:300,rating:4.8,address:"東寧路15巷14號",tags:["light"],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋",verifyKind:"recent",hoursCheckedAt:"2026-10-10",hoursSource:"Google Maps 商家搜尋",hours:{0:["10:00-18:00"],1:["07:30-17:00"],2:["07:30-17:00"],4:["07:30-17:00"],5:["07:30-17:00"],6:["10:00-18:00"]}},
+    {id:"tn297",name:"Map Cafe 旅圖咖啡",cat:"咖啡廳",price:0,rating:4.5,address:"凱旋路25號",tags:["light"],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋",verifyKind:"recent",hoursCheckedAt:"2026-10-10",hoursSource:"Google Maps 商家搜尋",hours:{0:["08:30-17:00"],2:["08:30-15:30"],3:["08:30-15:30"],4:["08:30-15:30"],5:["08:30-15:30"],6:["08:30-17:00"]}},
+    {id:"tn298",name:"木木森咖啡｜崇善店",cat:"咖啡廳",price:0,rating:5.0,address:"崇善路148號",tags:["light"],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋",verifyKind:"recent",hoursCheckedAt:"2026-10-10",hoursSource:"Google Maps 商家搜尋",hours:{0:["07:00-16:30"],1:["07:00-16:30"],2:["07:00-16:30"],3:["07:00-16:30"],4:["07:00-16:30"],5:["07:00-16:30"],6:["07:00-16:30"]}},
+    {id:"tn299",name:"SASADRA",cat:"咖啡廳・早午餐・甜點",price:300,rating:4.2,address:"東寧路西段5號",tags:["light"],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋",verifyKind:"recent",hoursCheckedAt:"2026-10-10",hoursSource:"Google Maps 商家搜尋",hours:{0:["10:00-21:00"],1:["10:00-21:00"],2:["10:00-21:00"],3:["10:00-21:00"],4:["10:00-21:00"],5:["10:00-21:00"],6:["10:00-21:00"]}},
+    {id:"tn300",name:"緩緩咖啡",cat:"咖啡廳・甜點",price:200,rating:4.9,address:"東光路二段86號",tags:["light","late"],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋",verifyKind:"recent",hoursCheckedAt:"2026-10-10",hoursSource:"Google Maps 商家搜尋",hours:{0:["11:00-18:00"],1:["11:00-18:00"],2:["11:00-18:00"],4:["11:00-18:00"],5:["11:00-23:00"],6:["11:00-23:00"]}},
+    {id:"tn301",name:"Coffee x Conscience 咖啡良知",cat:"咖啡廳",price:0,rating:4.8,address:"崇德二十一街138巷23號",tags:["light"],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋",verifyKind:"recent",hoursCheckedAt:"2026-10-10",hoursSource:"Google Maps 商家搜尋",hours:{0:["09:00-18:00"],1:["09:00-18:00"],4:["09:00-18:00"],5:["09:00-18:00"],6:["09:00-18:00"]}},
+    {id:"tn302",name:"木木森咖啡 臺南裕農店",cat:"咖啡廳",price:0,rating:4.8,address:"裕農路779號",tags:["light"],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋",verifyKind:"recent",hoursCheckedAt:"2026-10-10",hoursSource:"Google Maps 商家搜尋",hours:{0:["07:30-16:30"],1:["07:30-16:30"],2:["07:30-16:30"],3:["07:30-16:30"],4:["07:30-16:30"],5:["07:30-16:30"],6:["07:30-16:30"]}},
+    {id:"tn303",name:"MAINiCHI CAFE丨每天咖啡",cat:"咖啡廳",price:0,rating:4.8,address:"東平路249號",tags:["light"],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋",verifyKind:"recent",hoursCheckedAt:"2026-10-10",hoursSource:"Google Maps 商家搜尋",hours:{1:["07:30-17:00"],2:["07:30-17:00"],3:["07:30-17:00"],4:["07:30-17:00"],5:["07:30-17:00"],6:["09:00-17:00"]}},
+    {id:"tn304",name:"Noi espresso bar 台南東區巷弄咖啡廳",cat:"咖啡廳・Espresso",price:0,rating:5.0,address:"崇善十五街45號",tags:["light"],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋",verifyKind:"recent",hours:{}},
+    {id:"tn305",name:"Annie & Coffee",cat:"咖啡廳・早午餐",price:300,rating:5.0,address:"東寧路120巷85-2號",tags:["light"],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋",verifyKind:"recent",hoursCheckedAt:"2026-10-10",hoursSource:"Google Maps 商家搜尋",hours:{0:["10:00-17:00"],3:["10:00-17:00"],4:["12:00-18:00"],5:["10:00-17:00"]}},
+    {id:"tn306",name:"己己咖啡",cat:"咖啡廳",price:0,rating:4.1,address:"光明街175巷4號",tags:["light"],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋",verifyKind:"recent",hoursCheckedAt:"2026-10-10",hoursSource:"Google Maps 商家搜尋",hours:{0:["08:00-15:00"],1:["08:00-15:00"],2:["08:00-15:00"],3:["08:00-15:00"],4:["08:00-15:00"]}},
+    {id:"tn307",name:"MINI.D COFFEE 崇德館",cat:"咖啡廳",price:250,rating:4.6,address:"崇明二十四街82號",tags:["light"],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋",verifyKind:"recent",hoursCheckedAt:"2026-10-10",hoursSource:"Google Maps 商家搜尋",hours:{0:["07:30-22:00"],1:["07:30-22:00"],2:["07:30-22:00"],3:["07:30-22:00"],4:["07:30-22:00"],5:["07:30-22:00"],6:["07:30-22:00"]}},
+    {id:"tn308",name:"July8th.cafe",cat:"咖啡廳",price:300,rating:4.7,address:"怡東路86巷4號",tags:["light","late"],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋",verifyKind:"recent",hoursCheckedAt:"2026-10-10",hoursSource:"Google Maps 商家搜尋",hours:{0:["13:00-22:00"],1:["13:00-22:00"],2:["13:00-22:00"],3:["13:00-22:00"],4:["13:00-22:00"],5:["13:00-22:00"],6:["13:00-22:00"]}},
+    {id:"tn309",name:"月牙兒彎彎 Le Croissant de Lune",cat:"咖啡廳・甜點",price:0,rating:4.8,address:"東興路20巷109號",tags:["light"],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋",verifyKind:"recent",hoursCheckedAt:"2026-10-10",hoursSource:"Google Maps 商家搜尋",hours:{0:["11:30-16:30"],6:["11:30-16:30"]}},
+    {id:"tn310",name:"here Kyoto 台南丨開山・清水",cat:"咖啡廳",price:300,rating:4.3,address:"開山路3巷21號",tags:["light"],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋",verifyKind:"recent",hoursCheckedAt:"2026-10-10",hoursSource:"Google Maps 商家搜尋",hours:{0:["07:30-17:00"],1:["07:30-17:00"],2:["07:30-17:00"],4:["07:30-17:00"],5:["07:30-17:00"],6:["07:30-17:00"]}},
+    {id:"tn311",name:"山洞咖啡 shandong",cat:"咖啡廳",price:300,rating:4.8,address:"開山路52巷3號2樓",tags:["light"],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋",verifyKind:"recent",hoursCheckedAt:"2026-10-10",hoursSource:"Google Maps 商家搜尋",hours:{0:["13:00-18:00"],1:["13:00-18:00"],4:["13:00-18:00"],5:["13:00-18:00"],6:["13:00-18:00"]}},
+    {id:"tn312",name:"窄門咖啡館",cat:"咖啡廳・甜點",price:300,rating:4.5,address:"南門路67號2樓",tags:["light"],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋",verifyKind:"recent",hoursCheckedAt:"2026-10-10",hoursSource:"Google Maps 商家搜尋",hours:{0:["11:00-19:30"],1:["11:30-19:30"],2:["11:30-19:00"],4:["11:30-19:00"],5:["11:30-19:00"],6:["11:00-19:30"]}},
+    {id:"tn313",name:"IBT COffee",cat:"咖啡廳・甜點・深夜咖啡",price:300,rating:4.5,address:"開山路122巷54號",tags:["light","late"],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋",verifyKind:"recent",hoursCheckedAt:"2026-10-10",hoursSource:"Google Maps 商家搜尋",hours:{0:["11:00-18:30"],1:["11:00-18:30","19:00-01:00"],2:["11:00-18:30","19:00-01:00"],3:["11:00-18:30","19:00-01:00"],4:["11:00-18:30","19:00-01:00"],5:["11:00-18:30","19:00-01:00"],6:["11:00-18:30","19:00-01:00"]}},
+    {id:"tn314",name:"錫鼓",cat:"咖啡廳",price:300,rating:4.6,address:"開山路35巷39弄5號",tags:["light"],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋",verifyKind:"recent",hoursCheckedAt:"2026-10-10",hoursSource:"Google Maps 商家搜尋",hours:{0:["10:00-17:30"],1:["10:00-17:30"],3:["10:00-17:30"],4:["10:00-17:30"],5:["10:00-17:30"],6:["10:00-17:30"]}},
+    {id:"tn315",name:"日月参上 HITSUKI SANJO",cat:"咖啡廳・甜點・深夜咖啡",price:300,rating:4.6,address:"興華街35巷6號",tags:["light","late"],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋",verifyKind:"recent",hoursCheckedAt:"2026-10-10",hoursSource:"Google Maps 商家搜尋",hours:{0:["12:00-23:00"],1:["12:00-23:00"],2:["12:00-23:00"],3:["12:00-23:00"],4:["12:00-23:00"],5:["12:00-23:00"],6:["12:00-23:00"]}},
+    {id:"tn316",name:"伴個食舖",cat:"台式料理・餐館",price:0,rating:5.0,address:"長榮路二段120號1樓",tags:[],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋",verifyKind:"recent",hoursCheckedAt:"2026-10-10",hoursSource:"Google Maps 商家搜尋",hours:{0:["12:00-15:00","17:45-21:15"],1:["17:45-21:15"],2:["17:45-21:15"],5:["17:45-21:15"],6:["17:45-21:15"]}},
+    {id:"tn317",name:"長榮牛肉湯",cat:"牛肉湯・早餐・小吃",price:150,rating:4.2,address:"長榮路二段88號",tags:["cheap"],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋",verifyKind:"recent",hoursCheckedAt:"2026-10-10",hoursSource:"Google Maps 商家搜尋",hours:{0:["05:30-12:00"],3:["05:30-12:00"],4:["05:30-12:00"],5:["05:30-12:00"],6:["05:30-12:00"]}},
+    {id:"tn318",name:"東大麵館",cat:"麵食・小吃",price:150,rating:4.2,address:"崇善路683號",tags:["cheap"],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋",verifyKind:"recent",hoursCheckedAt:"2026-10-10",hoursSource:"Google Maps 商家搜尋",hours:{1:["09:00-20:30"],2:["09:00-20:30"],3:["09:00-20:30"],4:["09:00-20:30"],5:["09:00-20:30"],6:["09:00-20:30"]}},
+    {id:"tn319",name:"食居川味小館",cat:"川味・中式料理",price:300,rating:4.6,address:"崇善路655號",tags:[],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋",verifyKind:"recent",hours:{}},
+    {id:"tn320",name:"濃園滿漢餐廳",cat:"中式料理・合菜",price:600,rating:4.3,address:"長榮路二段248號",tags:["feast"],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋",verifyKind:"recent",hoursCheckedAt:"2026-10-10",hoursSource:"Google Maps 商家搜尋",hours:{0:["11:00-14:00","17:00-20:30"],2:["11:00-13:30","17:00-20:30"],3:["11:00-13:30","17:00-20:30"],4:["11:00-13:30","17:00-20:30"],5:["11:00-13:30","17:00-20:30"],6:["11:00-14:00","17:00-20:30"]}},
+    {id:"tn321",name:"久昌飯店",cat:"餐館・家常料理",price:0,rating:4.3,address:"長榮路三段66巷11號",tags:[],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋",verifyKind:"recent",hoursCheckedAt:"2026-10-10",hoursSource:"Google Maps 商家搜尋",hours:{0:["11:30-13:30","18:00-20:00"],1:["11:30-13:30","18:00-20:00"],3:["11:30-13:30","18:00-20:00"],5:["11:30-13:30","18:00-20:00"]}},
+    {id:"tn322",name:"河馬大口吃",cat:"晚餐・宵夜・鍋燒・炸物",price:150,rating:4.8,address:"崇善路689號",tags:["cheap","late"],verifiedAt:"2026-10-10",verifySource:"Google Maps 商家搜尋",verifyKind:"recent",hoursCheckedAt:"2026-10-10",hoursSource:"Google Maps 商家搜尋",hours:{0:["16:30-00:30"],1:["16:30-00:30"],2:["16:30-00:30"],4:["16:30-00:30"],5:["16:30-00:30"],6:["16:30-00:30"]}}
 
   ]
 };
@@ -1361,6 +1395,7 @@ function cuisineGroups(shop){
   if(/早餐|早午餐|飯糰|豆漿|吐司|燒餅|蛋餅/.test(t)) g.add("breakfast");
   if(/日式|壽司|拉麵|居酒屋|牛丼|丼飯|鐵板燒/.test(t)) g.add("japanese");
   if(/甜點|飲料|甜湯|綠豆湯|咖啡|麵包|烘焙|可頌|kombucha/i.test(t)) g.add("sweet");
+  if(/咖啡|珈琲|coffee|cafe|café|espresso/i.test(t)) g.add("cafe");
   return g;
 }
 function isSourDish(shop){
@@ -1437,10 +1472,10 @@ function distanceTier(shop){
     if(n<=900) return 2;
     return 3;
   }
-  if(/東門路二段|東寧路|東光路|東平路|小東路|林森路|東安路|怡東路|長榮路三段|大學路|育樂街|勝利路|前鋒路/.test(a)) return 2;
+  if(/東門路二段|東寧路|東光路|東平路|小東路|林森路|東安路|怡東路|長榮路二段|長榮路三段|大學路|育樂街|勝利路|前鋒路|凱旋路|東興路/.test(a)) return 2;
   const cd=a.match(/崇德路(\d+)/);
   if(cd) return Number(cd[1])>500?3:2;
-  if(/崇善路|崇道路|裕興路|崇學路|崇明路|榮譽街|東門路三段/.test(a)) return 3;
+  if(/崇善路|崇道路|裕興路|崇學路|崇明路|榮譽街|東門路三段|開山路|南門路|興華街/.test(a)) return 3;
   return 2;
 }
 function distanceLabel(shop){
@@ -1544,6 +1579,7 @@ function filteredBase(){
   if(state.filters.has("cheap")) out=out.filter(s=>effectivePrice(s)>0 && effectivePrice(s)<=200);
   if(state.filters.has("late")) out=out.filter(isLateShop);
   if(state.filters.has("light")) out=out.filter(s=>s.tags.includes("light"));
+  if(state.filters.has("cafe")) out=out.filter(s=>cuisineGroups(s).has("cafe"));
   if(state.filters.has("feast")) out=out.filter(s=>s.tags.includes("feast"));
 
   if(state.distance==="smart"){
@@ -2108,7 +2144,7 @@ function setHome(h){
 }
 function setShopTab(t){
   state.shopTab=t;
-  ["all","fav","untried","blocked","custom","verified","reported"].forEach(x=>document.getElementById("tab-"+x)?.classList.toggle("active",x===t));
+  ["all","fav","untried","cafe","blocked","custom","verified","reported"].forEach(x=>document.getElementById("tab-"+x)?.classList.toggle("active",x===t));
   renderShops();
   if(["unknownhours","unknownprice","needsreview","reported"].includes(t)) document.getElementById("shopList")?.scrollIntoView({behavior:"smooth",block:"start"});
 }
@@ -2116,6 +2152,7 @@ function renderShops(){
   let list=homeShops();
   if(state.shopTab==="fav") list=list.filter(s=>userInfo(s.id).rating>=3);
   if(state.shopTab==="untried") list=list.filter(s=>userInfo(s.id).count===0);
+  if(state.shopTab==="cafe") list=list.filter(s=>cuisineGroups(s).has("cafe"));
   if(state.shopTab==="blocked") list=list.filter(s=>isBlocked(s.id));
   if(state.shopTab==="custom") list=list.filter(s=>s.custom);
   if(state.shopTab==="verified") list=list.filter(s=>verificationInfo(s).level==="recent");

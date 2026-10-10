@@ -1,4 +1,4 @@
-const CACHE="food-decider-v20-mobile-1";
+const CACHE="food-decider-v21-cafe-1";
 const CORE=["./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./apple-touch-icon.png","./favicon-32.png"];
 
 self.addEventListener("install",(event)=>{
