@@ -263,7 +263,7 @@ button,a{touch-action:manipulation}
     </div>
   </div>
   <div class="top">
-    <div class="brand">FOOD DECIDER · v21</div>
+    <div class="brand">FOOD DECIDER · v22</div>
     <button id="installPill" class="install-pill" onclick="installFoodApp()">＋ 加到主畫面</button>
     <div class="home-switch">
       <button id="h-hsinchu" class="active" onclick="setHome('hsinchu')">竹北家</button>
@@ -274,7 +274,7 @@ button,a{touch-action:manipulation}
   <section class="hero">
     <div class="eyebrow" id="homeLabel">📍 竹北家附近</div>
     <h1>今天吃什麼？</h1>
-    <p>漏網補強：把咖啡廳獨立成真正分類，並依實際漏網店反查長榮二段、崇善、開山／孔廟等生活圈。</p>
+    <p>全生活圈可抽：智慧距離不再把較遠但仍在 15 分鐘內的店直接排除；近店只提高機率，不再壟斷候選池。</p>
     <button class="decide" onclick="safeDecide()">🍚 幫我決定</button>
     <div id="autoContext" class="context-card">正在判斷現在最適合怎麼找…</div>
     <div class="mode-row">
@@ -316,7 +316,7 @@ button,a{touch-action:manipulation}
       </div>
       <div class="distance-title">距離偏好 <span style="font-weight:500;color:var(--muted)">・以生活圈估計，不冒充即時導航</span></div>
       <div class="distance-row">
-        <button class="distance-btn active" data-distance="smart" onclick="setDistance('smart')">✨ 智慧範圍</button>
+        <button class="distance-btn active" data-distance="smart" onclick="setDistance('smart')">✨ 智慧距離</button>
         <button class="distance-btn" data-distance="home" onclick="setDistance('home')">🏠 很近</button>
         <button class="distance-btn" data-distance="near" onclick="setDistance('near')">🛵 約 10 分圈</button>
         <button class="distance-btn" data-distance="wide" onclick="setDistance('wide')">🛵 最遠約 15 分</button>
@@ -335,7 +335,7 @@ button,a{touch-action:manipulation}
         <span>🧯 速食／超商／泡麵可以當備案</span>
         <input id="fallbackAllowed" type="checkbox" class="switch" checked onchange="setFallbackAllowed(this.checked)">
       </div>
-      <div class="bug-note">智慧範圍會先從你家附近找；可選店太少時才逐步放寬，最多到約 15 分鐘生活圈。</div>
+      <div class="bug-note">智慧距離會保留整個約 15 分鐘生活圈；近店較容易先出現，但較遠的店不會再被直接排除。選「☕ 咖啡廳」時距離差異會更小。</div>
       <div class="pool-line">
         <div>
           <div id="poolInfo" class="pool-copy">正在計算可抽選店家…</div>
@@ -444,10 +444,10 @@ button,a{touch-action:manipulation}
       </div>
       <input id="shopSearch" class="searchbox" placeholder="搜尋店名、料理或地址…" oninput="renderShops()">
       <div id="shopList" class="shop-list"></div>
-      <div class="note">※ v21 不再把總店數當完整度：咖啡廳改成獨立分類，並用實際漏網店反查區域。這輪補入長榮二段、崇善、開山／孔廟與東區咖啡店等明顯缺口。</div>
+      <div class="note">※ v22 修正智慧距離的核心問題：以前附近只要有約 6 間可吃，就會把更遠但仍在 15 分鐘內的店整批排除；現在整個生活圈都能抽，距離只影響排序。</div>
     </div>
   </section>
-  <div class="build-note">v21 咖啡分類與漏網補強版 · Build 2026-10-10<br>個人紀錄只儲存在你的瀏覽器，可用「匯出備份」保存。<br>公開安全版：原始碼不含兩個住處的精確門牌；距離仍依既有生活圈分級規則運作。</div>
+  <div class="build-note">v22 全生活圈可抽版 · Build 2026-10-10<br>個人紀錄只儲存在你的瀏覽器，可用「匯出備份」保存。<br>公開安全版：原始碼不含兩個住處的精確門牌；距離仍依既有生活圈分級規則運作。</div>
 </div>
 
 <div class="mobile-dock">
@@ -1583,8 +1583,9 @@ function filteredBase(){
   if(state.filters.has("feast")) out=out.filter(s=>s.tags.includes("feast"));
 
   if(state.distance==="smart"){
-    state.effectiveTier=chooseSmartTier(out);
-    out=out.filter(s=>distanceTier(s)<=state.effectiveTier);
+    // v22: 智慧模式不再硬性縮到第一個「夠用」的小圈。
+    // 整個約 15 分鐘生活圈都保留，由 score() 用距離權重排序。
+    state.effectiveTier=3;
   }else{
     state.effectiveTier=state.distance==="home"?0:state.distance==="near"?2:3;
     out=out.filter(distanceAllowed);
@@ -1593,10 +1594,11 @@ function filteredBase(){
 }
 function eligible(){
   const base=filteredBase();
-  state.poolStrategy="";
+  state.poolStrategy=state.distance==="smart"?"智慧距離：15 分生活圈全部保留，近店只提高排序":"";
+
 
   if(state.availability==="all"){
-    state.poolStrategy="你選了不限制營業狀態";
+    state.poolStrategy+=(state.poolStrategy?"｜":"")+"你選了不限制營業狀態";
     return base;
   }
 
@@ -1607,9 +1609,9 @@ function eligible(){
   const period=mealPeriod().id;
 
   if(state.availability==="open"){
-    state.poolStrategy=confirmed.length
+    state.poolStrategy+=(state.poolStrategy?"｜":"")+(confirmed.length
       ? `只看營業中：${confirmed.length} 間近期核對＋${likely.length} 間依既有時段`
-      : `只看營業中：目前主要依既有時段判斷`;
+      : `只看營業中：目前主要依既有時段判斷`);
     return open;
   }
 
@@ -1619,32 +1621,32 @@ function eligible(){
   if(["deepLate","earlyBreakfast"].includes(period)){
     const lateOpen=open.filter(s=>isLateShop(s)||isFallbackOption(s)||cuisineGroups(s).has("breakfast"));
     if(lateOpen.length>=3){
-      state.poolStrategy=`${mealPeriod().label}：先用仍符合營業時段的深夜／早餐／備案選項`;
+      state.poolStrategy+=(state.poolStrategy?"｜":"")+`${mealPeriod().label}：先用仍符合營業時段的深夜／早餐／備案選項`;
       return lateOpen;
     }
     if(open.length){
-      state.poolStrategy=`${mealPeriod().label}：深夜選項不足，擴到所有仍符合時段的店`;
+      state.poolStrategy+=(state.poolStrategy?"｜":"")+`${mealPeriod().label}：深夜選項不足，擴到所有仍符合時段的店`;
       return open;
     }
     const fallback=base.filter(isFallbackOption);
     if(fallback.length){
-      state.poolStrategy=`${mealPeriod().label}：沒有可確認營業餐廳，使用速食／超商／泡麵備案`;
+      state.poolStrategy+=(state.poolStrategy?"｜":"")+`${mealPeriod().label}：沒有可確認營業餐廳，使用速食／超商／泡麵備案`;
       return fallback;
     }
-    state.poolStrategy=`${mealPeriod().label}：沒有可靠營業資訊，只能使用未知時段候選`;
+    state.poolStrategy+=(state.poolStrategy?"｜":"")+`${mealPeriod().label}：沒有可靠營業資訊，只能使用未知時段候選`;
     return unknown;
   }
 
   if(confirmed.length>=6){
-    state.poolStrategy=`優先使用 ${confirmed.length} 間營業時間近期核對的店`;
+    state.poolStrategy+=(state.poolStrategy?"｜":"")+`優先使用 ${confirmed.length} 間營業時間近期核對的店`;
     return confirmed;
   }
   if(open.length>=6){
-    state.poolStrategy=`近期核對店不足，加入依既有營業時段判斷的店`;
+    state.poolStrategy+=(state.poolStrategy?"｜":"")+`近期核對店不足，加入依既有營業時段判斷的店`;
     return open;
   }
   if(open.length>0){
-    state.poolStrategy=`目前可確認營業店較少，加入營業時間未知的店維持選擇`;
+    state.poolStrategy+=(state.poolStrategy?"｜":"")+`目前可確認營業店較少，加入營業時間未知的店維持選擇`;
     return [...open,...unknown];
   }
   state.poolStrategy=unknown.length
@@ -1703,6 +1705,16 @@ function score(s){
     else w*=late ? (isHomeOption(s)?0.75:1.05) : (isHomeOption(s)?0.12:0.32);
   }else if(state.filters.has("quick")){
     w*=0.42;
+  }
+
+  // 距離：v22 改成「加權」而不是「排除」。
+  // 一般情況近店比較容易先出現；若使用者明確選咖啡廳／探索新店，距離差異縮小。
+  if(state.distance==="smart"){
+    const dt=distanceTier(s);
+    const discovery=(state.mode==="explore" || state.filters.has("new") || state.filters.has("cafe"));
+    const normal=[1.32,1.16,0.98,0.78];
+    const explore=[1.12,1.06,1.00,0.92];
+    w*= (discovery?explore:normal)[Math.max(0,Math.min(3,dt))] || 1;
   }
 
   // 時段只影響排序，不硬性排除；個人口味的影響也刻意設上限。
@@ -1821,9 +1833,9 @@ function renderAutoContext(){
   const base=filteredBase();
   const confirmed=base.filter(confirmedOpen).length;
   const likely=base.filter(likelyOpen).length;
-  const d=["很近","近距離","約 10 分圈","最遠約 15 分圈"][state.effectiveTier]||"約 15 分圈";
+  const d=state.distance==="smart"?"全 15 分生活圈・近店優先":(["很近","近距離","約 10 分圈","最遠約 15 分圈"][state.effectiveTier]||"約 15 分圈");
   const budget=state.budget==="daily"?"平常約 150 元":state.budget==="treat"?"今天想吃好一點":"今天不看價格";
-  el.innerHTML=`<b>${p.label}</b>｜智慧範圍目前到 ${d}<br>${budget}・營業時間近期確認 ${confirmed} 間・依既有時段推測 ${likely} 間`;
+  el.innerHTML=`<b>${p.label}</b>｜${state.distance==="smart"?"智慧距離："+d:"距離："+d}<br>${budget}・營業時間近期確認 ${confirmed} 間・依既有時段推測 ${likely} 間`;
 }
 
 function updatePoolInfo(){
@@ -1844,7 +1856,7 @@ function updatePoolInfo(){
       : `不限制營業狀態`;
 
   const smartTierText=["很近","近距離","約 10 分圈","最遠約 15 分圈"][state.effectiveTier]||"約 15 分圈";
-  const dlabel=state.distance==="smart"?`智慧→${smartTierText}`:state.distance==="home"?"很近":state.distance==="near"?"約 10 分圈":"最遠約 15 分";
+  const dlabel=state.distance==="smart"?"智慧距離・全 15 分圈":state.distance==="home"?"很近":state.distance==="near"?"約 10 分圈":"最遠約 15 分";
   const budgetText=state.budget==="daily"?"平常約150":state.budget==="treat"?"500–1000優先":"不限預算";
   const cats=new Set(pool.map(categoryKey)).size;
   const homeIds=new Set(homeShops().map(s=>s.id));
@@ -1914,7 +1926,7 @@ function decide(){
     result.innerHTML=`<div class="card empty" style="text-align:left">
       <div style="font-weight:900;font-size:16px;color:var(--text);margin-bottom:8px">這次不是按鈕沒反應，是目前候選池變成 0 間</div>
       <div style="line-height:1.7">
-        在你現在的「${state.availability==="open"?"只看營業中":state.availability==="prefer"?"營業優先":"不限制"}」＋「${state.distance==="smart"?"智慧範圍":state.distance==="home"?"很近":state.distance==="near"?"約10分圈":"最遠約15分"}」條件下，
+        在你現在的「${state.availability==="open"?"只看營業中":state.availability==="prefer"?"營業優先":"不限制"}」＋「${state.distance==="smart"?"智慧距離・全15分圈":state.distance==="home"?"很近":state.distance==="near"?"約10分圈":"最遠約15分"}」條件下，
         系統目前能確認營業中的店是 ${knownOpen} 間。
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px">
